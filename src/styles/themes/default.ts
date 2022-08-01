@@ -7,4 +7,5 @@ export const defaultTheme = {
   'red-500': '#D9534F',
   'blue-500': '#4CACBC',
   white: '#fff',
+  radius: '4px',
 }

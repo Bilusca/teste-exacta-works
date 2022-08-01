@@ -1,30 +1,87 @@
 import { CaretRight } from 'phosphor-react'
-import { RegistrationContainer } from './styles'
+import { SubmitHandler, useForm } from 'react-hook-form'
+
+import {
+  FormContainer,
+  FormController,
+  InputBase,
+  RadioController,
+  RegistrationContainer,
+} from './styles'
+
+enum GenderEnum {
+  male = 'male',
+  female = 'female',
+}
+
+type Inputs = {
+  rg: string
+  emissionDate: Date
+  expedition: string
+  gender: GenderEnum
+}
 
 export function Registration() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>()
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
+
   return (
     <RegistrationContainer>
       <h1>Dados pessoais</h1>
-      <form action="">
-        <div>
-          <label htmlFor="rg">Número do RG</label>
-          <input name="rg" type="text" />
-          <label htmlFor="emissionDate">Data de emissão</label>
-          <input name="emissionDate" type="date" />
-          <label htmlFor="expedition">Orgão expedidor</label>
-          <select name="expedition">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-          </select>
-          <label htmlFor="gender">Sexo</label>
-          <input type="radio" name="gender" value="M" />
-          <input type="radio" name="gender" value="F" />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FormContainer>
+          <FormController>
+            <label htmlFor="rg">Número do RG</label>
+            <InputBase type="text" {...register('rg', { required: true })} />
+          </FormController>
+          <FormController>
+            <label htmlFor="emissionDate">Data de emissão</label>
+            <InputBase
+              type="date"
+              {...register('emissionDate', { required: true })}
+            />
+          </FormController>
+          <FormController>
+            <label htmlFor="expedition">Orgão expedidor</label>
+            <InputBase
+              as="select"
+              {...register('expedition', { required: true })}
+            >
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </InputBase>
+          </FormController>
+          <FormController isRow>
+            <RadioController>
+              <input
+                type="radio"
+                id="male"
+                value="male"
+                {...register('gender', { required: true })}
+              />
+              <label htmlFor="male">Masculino</label>
+            </RadioController>
+            <RadioController>
+              <input
+                type="radio"
+                id="female"
+                value="female"
+                {...register('gender', { required: true })}
+              />
+              <label htmlFor="female">Feminino</label>
+            </RadioController>
+          </FormController>
           <button type="submit">
             Continuar <CaretRight size={24} weight="duotone" />
           </button>
-        </div>
+        </FormContainer>
       </form>
     </RegistrationContainer>
   )
