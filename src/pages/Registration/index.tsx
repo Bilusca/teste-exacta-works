@@ -13,6 +13,7 @@ import {
   RegistrationContainer,
   SubmitButton,
 } from './styles'
+import { parseDateString } from '@/lib/parseDateString'
 
 type Inputs = {
   rg: string
@@ -26,21 +27,24 @@ const schema = yup.object({
     .string()
     .required('RG obrigatório')
     .matches(/[0-9]/, 'O RG não pode conter letras'),
-  emissionDate: yup.date().required('Data de emissão obrigatório'),
-  expedition: yup.string().required(),
-  gender: yup.string().required(),
+  emissionDate: yup
+    .date()
+    .nullable()
+    .typeError('Data de emissão obrigatória')
+    .transform(parseDateString)
+    .max(new Date(), 'Data inválida'),
+  expedition: yup.string().required('Orgão expedidor é obrigatório'),
+  gender: yup.string().required('Selecione um gênero'),
 })
 
 export function Registration() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<Inputs>({ resolver: yupResolver(schema) })
+    formState: { errors, isValid },
+  } = useForm<Inputs>({ resolver: yupResolver(schema), mode: 'all' })
 
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
-
-  console.log(errors)
 
   return (
     <RegistrationContainer>
@@ -74,15 +78,19 @@ export function Registration() {
                 as="select"
                 {...register('expedition')}
                 className={errors.expedition ? 'error' : ''}
+                defaultValue=""
               >
-                <option selected disabled>
-                  Selecione um orgão
+                <option disabled value="">
+                  Selecione um orgão expedidor
                 </option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
               </InputBase>
+              {errors.expedition && (
+                <ErrorMessage>{errors.expedition.message}</ErrorMessage>
+              )}
             </FormController>
           </InputContainer>
           <InputContainer>
@@ -106,10 +114,13 @@ export function Registration() {
                 />
                 <label htmlFor="female">Feminino</label>
               </RadioController>
+              {errors.gender && (
+                <ErrorMessage>{errors.gender.message}</ErrorMessage>
+              )}
             </FormController>
           </InputContainer>
           <InputContainer centered>
-            <SubmitButton type="submit">
+            <SubmitButton type="submit" disabled={!isValid}>
               Continuar <CaretRight size={24} weight="duotone" />
             </SubmitButton>
           </InputContainer>

@@ -151,4 +151,5 @@ export const ErrorMessage = styled.p`
   display: inline-block;
   font-weight: 500;
   margin-top: 0.5rem;
+  margin-bottom: -1.125rem;
 `
