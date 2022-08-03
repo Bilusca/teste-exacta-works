@@ -7,14 +7,14 @@ export const RegistrationContainer = styled.main`
   flex-direction: column;
 
   h1 {
-    margin-bottom: 5rem;
+    margin: 5rem 0;
   }
 `
 
 export const FormContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  width: 60rem;
+  width: ${(props) => props.theme.pageWidth};
 
   gap: 1.75rem;
 

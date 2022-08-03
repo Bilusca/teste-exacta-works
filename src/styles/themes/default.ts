@@ -8,4 +8,5 @@ export const defaultTheme = {
   'blue-500': '#4CACBC',
   white: '#fff',
   radius: '4px',
+  pageWidth: '60rem',
 }

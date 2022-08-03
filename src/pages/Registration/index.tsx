@@ -95,6 +95,7 @@ export function Registration() {
                 type="text"
                 {...register('rg')}
                 className={errors.rg ? 'error' : ''}
+                placeholder="Digite seu RG"
               />
               {errors.rg && <ErrorMessage>{errors.rg.message}</ErrorMessage>}
             </FormController>
@@ -109,6 +110,7 @@ export function Registration() {
                 type="date"
                 {...register('emissionDate')}
                 className={errors.emissionDate ? 'error' : ''}
+                placeholder="Data de emissão do documento"
               />
               {errors.emissionDate && (
                 <ErrorMessage>{errors.emissionDate.message}</ErrorMessage>
