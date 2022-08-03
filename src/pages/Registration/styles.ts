@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 
 export const RegistrationContainer = styled.main`
   display: flex;
@@ -16,22 +16,39 @@ export const FormContainer = styled.div`
   flex-wrap: wrap;
   width: 60rem;
 
-  gap: 1.25rem;
+  gap: 1.75rem;
 
   margin: 0 auto;
 `
 interface FormControllerProps {
   isRow?: boolean
+  flex?: number
 }
 
 export const FormController = styled.div<FormControllerProps>`
   display: flex;
   flex-direction: ${(props) => (props.isRow ? 'row' : 'column')};
 
+  ${(props) =>
+    props.flex &&
+    css`
+      flex: ${props.flex};
+    `}
+
+  &:focus-within {
+    label {
+      color: ${(props) => props.theme['blue-500']};
+    }
+  }
+
   label {
     font-size: 1.25rem;
     font-weight: bold;
     margin-bottom: 0.75rem;
+
+    &.error {
+      color: ${(props) => props.theme['red-500']};
+    }
   }
 
   span {
@@ -40,10 +57,6 @@ export const FormController = styled.div<FormControllerProps>`
     font-size: 1.25rem;
     font-weight: bold;
     margin-right: 1.25rem;
-  }
-
-  &:nth-child(1),
-  &:nth-child(2) {
   }
 `
 
@@ -63,10 +76,6 @@ export const InputContainer = styled.div<InputContainerProps>`
       align-items: center;
       justify-content: center;
     `}
-
-  & > div {
-    flex: 1;
-  }
 `
 
 export const InputBase = styled.input`
@@ -124,9 +133,19 @@ export const RadioController = styled.div`
   }
 
   input[type='radio']:checked + label {
-    background: hsla(150, 75%, 50%, 1);
+    background: ${(props) => props.theme['blue-500']};
     color: hsla(215, 0%, 100%, 1);
-    box-shadow: 0px 0px 20px hsla(150, 100%, 50%, 0.75);
+    border-color: ${(props) => props.theme['blue-500']};
+  }
+`
+
+const rotate = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 `
 
@@ -143,6 +162,10 @@ export const SubmitButton = styled.button`
   svg {
     margin-left: 1rem;
   }
+
+  svg.animate {
+    animation: ${rotate} 1s linear infinite;
+  }
 `
 
 export const ErrorMessage = styled.p`
@@ -151,5 +174,5 @@ export const ErrorMessage = styled.p`
   display: inline-block;
   font-weight: 500;
   margin-top: 0.5rem;
-  margin-bottom: -1.125rem;
+  margin-bottom: -1.5rem;
 `

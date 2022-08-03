@@ -1,4 +1,4 @@
-import { CaretRight } from 'phosphor-react'
+import { CaretRight, CircleNotch } from 'phosphor-react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
@@ -14,12 +14,25 @@ import {
   SubmitButton,
 } from './styles'
 import { parseDateString } from '@/lib/parseDateString'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import { api } from '@/lib/api'
+import toast from 'react-hot-toast'
 
 type Inputs = {
   rg: string
   emissionDate: Date
   expedition: string
   gender: 'male' | 'female'
+}
+
+type ExpeditionOrg = {
+  label: string
+  value: string
+}
+
+type ReponseProps = {
+  orgao_emissor: ExpeditionOrg[]
 }
 
 const schema = yup.object({
@@ -42,9 +55,31 @@ export function Registration() {
     register,
     handleSubmit,
     formState: { errors, isValid },
+    reset,
   } = useForm<Inputs>({ resolver: yupResolver(schema), mode: 'all' })
+  const [expeditionOrg, setExpeditionOrg] = useState<ExpeditionOrg[]>()
+  const [loading, setLoading] = useState<boolean>(false)
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
+  useEffect(() => {
+    axios.get<ReponseProps>('data.json').then((response) => {
+      setExpeditionOrg(response.data.orgao_emissor)
+    })
+  }, [])
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setLoading(true)
+
+    try {
+      const response = await api.post('documents', data)
+
+      reset()
+      toast.success(response.data.response)
+    } catch {
+      toast.error('Não foi possível cadastrar o documento')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <RegistrationContainer>
@@ -52,8 +87,10 @@ export function Registration() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormContainer>
           <InputContainer>
-            <FormController>
-              <label htmlFor="rg">Número do RG</label>
+            <FormController flex={1}>
+              <label className={errors.rg ? 'error' : ''} htmlFor="rg">
+                Número do RG
+              </label>
               <InputBase
                 type="text"
                 {...register('rg')}
@@ -62,7 +99,12 @@ export function Registration() {
               {errors.rg && <ErrorMessage>{errors.rg.message}</ErrorMessage>}
             </FormController>
             <FormController>
-              <label htmlFor="emissionDate">Data de emissão</label>
+              <label
+                className={errors.emissionDate ? 'error' : ''}
+                htmlFor="emissionDate"
+              >
+                Data de emissão
+              </label>
               <InputBase
                 type="date"
                 {...register('emissionDate')}
@@ -73,7 +115,12 @@ export function Registration() {
               )}
             </FormController>
             <FormController>
-              <label htmlFor="expedition">Orgão expedidor</label>
+              <label
+                className={errors.expedition ? 'error' : ''}
+                htmlFor="expedition"
+              >
+                Orgão expedidor
+              </label>
               <InputBase
                 as="select"
                 {...register('expedition')}
@@ -83,17 +130,19 @@ export function Registration() {
                 <option disabled value="">
                   Selecione um orgão expedidor
                 </option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
+                {!!expeditionOrg &&
+                  expeditionOrg.map((org) => (
+                    <option key={org.value} value={org.value}>
+                      {org.label}
+                    </option>
+                  ))}
               </InputBase>
               {errors.expedition && (
                 <ErrorMessage>{errors.expedition.message}</ErrorMessage>
               )}
             </FormController>
           </InputContainer>
-          <InputContainer>
+          <InputContainer centered>
             <FormController isRow>
               <span>Sexo</span>
               <RadioController>
@@ -120,8 +169,13 @@ export function Registration() {
             </FormController>
           </InputContainer>
           <InputContainer centered>
-            <SubmitButton type="submit" disabled={!isValid}>
-              Continuar <CaretRight size={24} weight="duotone" />
+            <SubmitButton type="submit" disabled={!isValid || loading}>
+              Continuar
+              {loading ? (
+                <CircleNotch className="animate" size={24} weight="duotone" />
+              ) : (
+                <CaretRight size={24} weight="duotone" />
+              )}
             </SubmitButton>
           </InputContainer>
         </FormContainer>
