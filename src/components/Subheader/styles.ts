@@ -22,6 +22,12 @@ export const InfoList = styled.ul`
       flex: 1;
     }
   }
+
+  @media (max-width: ${(props) => props.theme.tabletBreakpoint}) {
+    width: 80%;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 `
 
 interface InfoProps {

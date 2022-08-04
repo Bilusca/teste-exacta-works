@@ -10,6 +10,14 @@ export const RegistrationContainer = styled.main`
     margin: 5rem 0;
     text-transform: uppercase;
   }
+
+  form {
+    width: 100%;
+  }
+
+  @media (max-width: ${(props) => props.theme.tabletBreakpoint}) {
+    margin-bottom: 3rem;
+  }
 `
 
 export const FormContainer = styled.div`
@@ -20,6 +28,13 @@ export const FormContainer = styled.div`
   gap: 1.75rem;
 
   margin: 0 auto;
+
+  @media (max-width: ${(props) => props.theme.tabletBreakpoint}) {
+    width: 80%;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
 `
 interface FormControllerProps {
   isRow?: boolean
@@ -61,6 +76,17 @@ export const FormController = styled.div<FormControllerProps>`
     margin-right: 1.25rem;
     text-transform: uppercase;
   }
+
+  @media (max-width: ${(props) => props.theme.tabletBreakpoint}) {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+    width: 100%;
+
+    span {
+      margin-bottom: 0.75rem;
+    }
+  }
 `
 
 interface InputContainerProps {
@@ -79,6 +105,13 @@ export const InputContainer = styled.div<InputContainerProps>`
       align-items: center;
       justify-content: center;
     `}
+
+  @media (max-width: ${(props) => props.theme.tabletBreakpoint}) {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+    width: 100%;
+  }
 `
 
 export const InputBase = styled.input`
@@ -108,6 +141,10 @@ export const InputBase = styled.input`
     border: 2px solid ${(props) => props.theme['blue-500']};
     box-shadow: 0 0 2px ${(props) => props.theme['blue-500']};
   }
+
+  @media (max-width: ${(props) => props.theme.tabletBreakpoint}) {
+    width: 100%;
+  }
 `
 
 export const RadioController = styled.div`
@@ -133,6 +170,11 @@ export const RadioController = styled.div`
     text-align: center;
     position: relative;
     margin-right: 1.25rem;
+
+    @media (max-width: ${(props) => props.theme.tabletBreakpoint}) {
+      margin-bottom: 0.75rem;
+      width: 80vw;
+    }
   }
 
   input[type='radio']:checked + label {
@@ -169,6 +211,10 @@ export const SubmitButton = styled.button`
 
   svg.animate {
     animation: ${rotate} 1s linear infinite;
+  }
+
+  @media (max-width: ${(props) => props.theme.tabletBreakpoint}) {
+    width: 100%;
   }
 `
 

@@ -12,4 +12,9 @@ export const HomeContainer = styled.main`
     margin: 5rem 0;
     text-transform: uppercase;
   }
+
+  @media (max-width: ${(props) => props.theme.tabletBreakpoint}) {
+    width: 80%;
+    margin-bottom: 3rem;
+  }
 `

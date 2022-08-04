@@ -12,6 +12,13 @@ export const StepsContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    @media (max-width: ${(props) => props.theme.tabletBreakpoint}) {
+      width: 80%;
+      flex-direction: column;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
   }
 `
 

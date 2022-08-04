@@ -10,4 +10,5 @@ export const defaultTheme = {
   white: '#fff',
   radius: '4px',
   pageWidth: '60rem',
+  tabletBreakpoint: '768.25px',
 }
