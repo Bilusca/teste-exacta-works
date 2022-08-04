@@ -1,7 +1,15 @@
+import { useState } from 'react'
 import { CaretRight, CircleNotch } from 'phosphor-react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
+import toast from 'react-hot-toast'
+import { format } from 'date-fns'
+
+import { parseDateString } from '@/lib/parseDateString'
+import { api } from '@/lib/api'
+import { Steps } from '@/components/Steps'
+import { useDocumentContext } from '@/context/DocumentContext'
 
 import {
   ErrorMessage,
@@ -13,12 +21,6 @@ import {
   RegistrationContainer,
   SubmitButton,
 } from './styles'
-import { parseDateString } from '@/lib/parseDateString'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { api } from '@/lib/api'
-import toast from 'react-hot-toast'
-import { Steps } from '@/components/Steps'
 
 type Inputs = {
   rg: string
@@ -27,20 +29,22 @@ type Inputs = {
   gender: 'male' | 'female'
 }
 
-type ExpeditionOrg = {
-  label: string
-  value: string
-}
-
-type ReponseProps = {
-  orgao_emissor: ExpeditionOrg[]
+interface DocumentsApiResponse {
+  message: string
+  document: {
+    emissionDate: Date
+    expedition: string
+    gender: string
+    id: string
+    rg: string
+  }
 }
 
 const schema = yup.object({
   rg: yup
     .string()
     .required('RG obrigatório')
-    .matches(/[0-9]/, 'O RG não pode conter letras'),
+    .matches(/[0-9-.]/, 'O RG não pode conter letras'),
   emissionDate: yup
     .date()
     .nullable()
@@ -52,29 +56,33 @@ const schema = yup.object({
 })
 
 export function Registration() {
+  const { expeditionOrg, handleSetDocuments } = useDocumentContext()
+
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
     reset,
   } = useForm<Inputs>({ resolver: yupResolver(schema), mode: 'all' })
-  const [expeditionOrg, setExpeditionOrg] = useState<ExpeditionOrg[]>()
-  const [loading, setLoading] = useState<boolean>(false)
 
-  useEffect(() => {
-    axios.get<ReponseProps>('data.json').then((response) => {
-      setExpeditionOrg(response.data.orgao_emissor)
-    })
-  }, [])
+  const [loading, setLoading] = useState<boolean>(false)
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setLoading(true)
 
     try {
-      const response = await api.post('documents', data)
+      const response = await api.post<DocumentsApiResponse>('documents', data)
+      const document = {
+        ...response.data.document,
+        emissionDate: format(
+          new Date(response.data.document.emissionDate),
+          'dd/MM/yyy',
+        ),
+      }
+      handleSetDocuments(document)
 
       reset()
-      toast.success(response.data.response)
+      toast.success(response.data.message)
     } catch {
       toast.error('Não foi possível cadastrar o documento')
     } finally {
