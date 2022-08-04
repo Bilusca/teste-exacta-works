@@ -8,6 +8,7 @@ export const RegistrationContainer = styled.main`
 
   h1 {
     margin: 5rem 0;
+    text-transform: uppercase;
   }
 `
 
@@ -45,6 +46,7 @@ export const FormController = styled.div<FormControllerProps>`
     font-size: 1.25rem;
     font-weight: bold;
     margin-bottom: 0.75rem;
+    text-transform: uppercase;
 
     &.error {
       color: ${(props) => props.theme['red-500']};
@@ -57,6 +59,7 @@ export const FormController = styled.div<FormControllerProps>`
     font-size: 1.25rem;
     font-weight: bold;
     margin-right: 1.25rem;
+    text-transform: uppercase;
   }
 `
 
@@ -158,6 +161,7 @@ export const SubmitButton = styled.button`
   font-weight: bold;
   padding: 0 3rem;
   cursor: pointer;
+  text-transform: uppercase;
 
   svg {
     margin-left: 1rem;

@@ -5,4 +5,9 @@ export const HomeContainer = styled.main`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+
+  h1 {
+    margin: 5rem 0;
+    text-transform: uppercase;
+  }
 `

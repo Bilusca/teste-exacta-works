@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { api } from '@/lib/api'
 import toast from 'react-hot-toast'
+import { Steps } from '@/components/Steps'
 
 type Inputs = {
   rg: string
@@ -83,6 +84,7 @@ export function Registration() {
 
   return (
     <RegistrationContainer>
+      <Steps />
       <h1>Dados pessoais</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormContainer>
