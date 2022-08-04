@@ -139,9 +139,6 @@ export function Registration() {
                 className={errors.expedition ? 'error' : ''}
                 defaultValue=""
               >
-                <option disabled value="">
-                  Selecione um orgão expedidor
-                </option>
                 {!!expeditionOrg &&
                   expeditionOrg.map((org) => (
                     <option key={org.value} value={org.value}>

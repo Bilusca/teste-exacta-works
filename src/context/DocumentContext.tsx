@@ -5,6 +5,7 @@ import {
   ReactNode,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react'
 
@@ -45,6 +46,7 @@ interface DocumentContextProviderProps {
 export function DocumentContextProvider({
   children,
 }: DocumentContextProviderProps) {
+  const shouldFetch = useRef(true)
   const [documents, setDocuments] = useState<Document[]>([] as Document[])
   const [loading, setLoading] = useState<boolean>(false)
   const [expeditionOrg, setExpeditionOrg] = useState<ExpeditionOrg[]>(
@@ -56,18 +58,26 @@ export function DocumentContextProvider({
       ...document,
       emissionDate: format(new Date(document.emissionDate), 'dd/MM/yyy'),
       gender: selectGender(document.gender),
+      expedition: expeditionOrg.filter(
+        (org) => document.expedition === org.value,
+      )[0].label,
     }
 
     setDocuments([...documents, documentToSave])
   }
 
   useEffect(() => {
-    axios.get<ReponseProps>('data.json').then((response) => {
-      setExpeditionOrg(response.data.orgao_emissor)
-    })
+    if (shouldFetch.current) {
+      shouldFetch.current = false
+      axios.get<ReponseProps>('data.json').then((response) => {
+        setExpeditionOrg(response.data.orgao_emissor)
+      })
+    }
   }, [])
 
   useEffect(() => {
+    if (!expeditionOrg.length) return
+
     setLoading(true)
     api
       .get<Document[]>('documents')
@@ -85,13 +95,14 @@ export function DocumentContextProvider({
 
         setDocuments(response)
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e)
         toast.error('Não foi possível carregar os documentos')
       })
       .finally(() => {
         setLoading(false)
       })
-  }, [])
+  }, [expeditionOrg])
 
   return (
     <DocumentContext.Provider
