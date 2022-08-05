@@ -1,3 +1,4 @@
+import { useDeleteModalContext } from '@/context/DeleteModalContext'
 import { Pen, Trash } from 'phosphor-react'
 import { NavLink } from 'react-router-dom'
 import { ActionsCell, DocumentsContainer } from './styles'
@@ -20,6 +21,8 @@ interface DocumentsProps {
 }
 
 export function Documents({ documents }: DocumentsProps) {
+  const { openModal } = useDeleteModalContext()
+
   return (
     <DocumentsContainer>
       <table>
@@ -55,7 +58,7 @@ export function Documents({ documents }: DocumentsProps) {
                 <NavLink to={`/cadastro/${document.id}`} title="Editar">
                   <Pen size={24} weight="duotone" />
                 </NavLink>
-                <button title="Excluir">
+                <button title="Excluir" onClick={() => openModal(document.id)}>
                   <Trash size={24} weight="duotone" />
                 </button>
               </ActionsCell>

@@ -4,6 +4,8 @@ import { Loading } from '@/components/Loading'
 import { useDocumentContext } from '@/context/DocumentContext'
 import { HomeContainer } from './styles'
 
+import { DeleteModalContextProvider } from '@/context/DeleteModalContext'
+
 export function Home() {
   const { documents, loading } = useDocumentContext()
 
@@ -13,7 +15,9 @@ export function Home() {
       {loading ? (
         <Loading />
       ) : documents?.length && !loading ? (
-        <Documents documents={documents} />
+        <DeleteModalContextProvider>
+          <Documents documents={documents} />
+        </DeleteModalContextProvider>
       ) : (
         <BlankState />
       )}

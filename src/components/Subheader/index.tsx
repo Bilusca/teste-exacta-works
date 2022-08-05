@@ -1,27 +1,43 @@
 import { Info, InfoList, SubheaderContainer } from './styles'
 
-export function Subheader() {
+interface Document {
+  name: string
+  cpf: string
+  amount: number
+  installments: number
+  description: string
+}
+
+interface SubheaderProps {
+  document: Document
+}
+
+export function Subheader({ document }: SubheaderProps) {
   return (
     <SubheaderContainer>
       <InfoList>
         <li>
           <Info>Me chamo:</Info>
-          <Info isPersonInfo>Paul Irish</Info>
+          <Info isPersonInfo>{document.name}</Info>
           <Info isCpf>
-            <b>CPF:</b> 123.456.789-10
+            <b>CPF:</b> {document.cpf}
           </Info>
         </li>
         <li>
           <Info>Preciso de:</Info>
-          <Info isPersonInfo>R$ 2.000</Info>
+          <Info isPersonInfo>{document.amount}</Info>
         </li>
         <li>
           <Info>Quero parcelar em:</Info>
-          <Info isPersonInfo>12 vezes</Info>
+          <Info isPersonInfo>
+            {document.installments > 1
+              ? document.installments + ' vezes'
+              : document.installments + ' vez'}
+          </Info>
         </li>
         <li>
           <Info>Para:</Info>
-          <Info isPersonInfo>Comprar uma bike</Info>
+          <Info isPersonInfo>{document.description}</Info>
         </li>
       </InfoList>
     </SubheaderContainer>

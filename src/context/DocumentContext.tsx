@@ -42,6 +42,7 @@ interface DocumentContextProps {
   handleSetDocuments: (document: Document) => void
   handleUpdateDocuments: (id: string, document: Document) => void
   selectDocument: (id: string) => Document
+  handleDeleteDocument: (id: string) => void
 }
 
 const DocumentContext = createContext({} as DocumentContextProps)
@@ -105,9 +106,13 @@ export function DocumentContextProvider({
       gender: selectedDocument.gender === 'Masculino' ? 'male' : 'female',
     }
 
-    console.log(docToEdit)
-
     return docToEdit
+  }
+
+  function handleDeleteDocument(id: string) {
+    const filteredDocuments = documents.filter((document) => document.id !== id)
+
+    setDocuments(filteredDocuments)
   }
 
   useEffect(() => {
@@ -157,6 +162,7 @@ export function DocumentContextProvider({
         handleSetDocuments,
         selectDocument,
         handleUpdateDocuments,
+        handleDeleteDocument,
       }}
     >
       {children}

@@ -9,6 +9,7 @@ import { useDocumentContext } from '@/context/DocumentContext'
 import { api } from '@/lib/api'
 import { Form } from '@/components/Form'
 import { EditRegistrationContainer } from './styles'
+import { Subheader } from '@/components/Subheader'
 
 type Inputs = {
   name: string
@@ -74,13 +75,20 @@ export function EditRegistration() {
   }
 
   return (
-    <EditRegistrationContainer>
-      <StepContextProvider>
-        <>
-          <h1>Editar dados pessoais</h1>
-          <Form loading={loading} onSubmitForm={onSubmit} document={document} />
-        </>
-      </StepContextProvider>
-    </EditRegistrationContainer>
+    <>
+      <Subheader document={document} />
+      <EditRegistrationContainer>
+        <StepContextProvider>
+          <>
+            <h1>Editar dados pessoais</h1>
+            <Form
+              loading={loading}
+              onSubmitForm={onSubmit}
+              document={document}
+            />
+          </>
+        </StepContextProvider>
+      </EditRegistrationContainer>
+    </>
   )
 }
