@@ -74,20 +74,33 @@ interface FormProps {
 
 export function Form({ loading, onSubmitForm }: FormProps) {
   const { expeditionOrg } = useDocumentContext()
-  const { goToNextStep } = useStepContext()
+  const { goToNextStep, selectedStep } = useStepContext()
 
   const {
     register,
     handleSubmit,
-    watch,
-    formState: { errors, isValid },
-    getValues,
+    formState: { errors, isValid, isDirty },
     reset,
+    getFieldState,
+    watch,
   } = useForm<Inputs>({ resolver: yupResolver(schema), mode: 'all' })
 
   function handleApplyMask(e: ChangeEvent<HTMLInputElement>) {
     const parsedValue = parseCpf(e.target.value, e.target.value)
     e.target.value = parsedValue
+  }
+
+  function handleDisabled(field: 'amount' | 'installments') {
+    const { error } = getFieldState(field)
+    const value = watch(field)
+
+    if (error) {
+      return true
+    }
+
+    if (!value) {
+      return true
+    }
   }
 
   const submitForm: SubmitHandler<Inputs> = async (data) => {
@@ -101,185 +114,231 @@ export function Form({ loading, onSubmitForm }: FormProps) {
 
   return (
     <form onSubmit={handleSubmit(submitForm)}>
-      <FormContainer>
-        <InputContainer>
-          <FormController flex={1}>
-            <label className={errors.amount ? 'error' : ''} htmlFor="amount">
-              Valor
-            </label>
-            <InputBase
-              type="number"
-              {...register('amount')}
-              className={errors.amount ? 'error' : ''}
-              placeholder="Digite um valor"
-            />
-            {errors.amount && (
-              <ErrorMessage>{errors.amount.message}</ErrorMessage>
-            )}
-          </FormController>
-        </InputContainer>
-        <InputContainer>
-          <FormController flex={1}>
-            <label className={errors.cpf ? 'error' : ''} htmlFor="installments">
-              Parcelas
-            </label>
-            <InputBase
-              type="number"
-              {...register('installments')}
-              className={errors.installments ? 'error' : ''}
-              placeholder="Digite a quantidade de parcelas"
-            />
-            {errors.installments && (
-              <ErrorMessage>{errors.installments.message}</ErrorMessage>
-            )}
-          </FormController>
-        </InputContainer>
-        <InputContainer centered>
-          <SubmitButton type="button" onClick={() => moveStep(1)}>
-            Continuar
-            <CaretRight size={24} weight="duotone" />
-          </SubmitButton>
-        </InputContainer>
-      </FormContainer>
-      <FormContainer>
-        <InputContainer>
-          <FormController flex={1}>
-            <label className={errors.name ? 'error' : ''} htmlFor="name">
-              Nome
-            </label>
-            <InputBase
-              type="text"
-              {...register('name')}
-              className={errors.name ? 'error' : ''}
-              placeholder="Digite seu Nome"
-            />
-            {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
-          </FormController>
-          <FormController>
-            <label className={errors.cpf ? 'error' : ''} htmlFor="cpf">
-              Cpf
-            </label>
-            <InputBase
-              type="text"
-              {...register('cpf')}
-              className={errors.cpf ? 'error' : ''}
-              placeholder="Digite seu cpf"
-              onChange={handleApplyMask}
-            />
-            {errors.cpf && <ErrorMessage>{errors.cpf.message}</ErrorMessage>}
-          </FormController>
-        </InputContainer>
-        <InputContainer>
-          <FormController flex={1}>
-            <label
-              className={errors.description ? 'error' : ''}
-              htmlFor="description"
-            >
-              Motivo do empréstimo
-            </label>
-            <InputBase
-              type="text"
-              {...register('description')}
-              className={errors.description ? 'error' : ''}
-              placeholder="Digite seu Nome"
-            />
-            {errors.description && (
-              <ErrorMessage>{errors.description.message}</ErrorMessage>
-            )}
-          </FormController>
-        </InputContainer>
-        <InputContainer>
-          <FormController flex={1}>
-            <label className={errors.rg ? 'error' : ''} htmlFor="rg">
-              Número do RG
-            </label>
-            <InputBase
-              type="text"
-              {...register('rg')}
-              className={errors.rg ? 'error' : ''}
-              placeholder="Digite seu RG"
-            />
-            {errors.rg && <ErrorMessage>{errors.rg.message}</ErrorMessage>}
-          </FormController>
-          <FormController>
-            <label
-              className={errors.emissionDate ? 'error' : ''}
-              htmlFor="emissionDate"
-            >
-              Data de emissão
-            </label>
-            <InputBase
-              type="date"
-              {...register('emissionDate')}
-              className={errors.emissionDate ? 'error' : ''}
-              placeholder="Data de emissão do documento"
-            />
-            {errors.emissionDate && (
-              <ErrorMessage>{errors.emissionDate.message}</ErrorMessage>
-            )}
-          </FormController>
-          <FormController>
-            <label
-              className={errors.expedition ? 'error' : ''}
-              htmlFor="expedition"
-            >
-              Orgão expedidor
-            </label>
-            <InputBase
-              as="select"
-              {...register('expedition')}
-              className={errors.expedition ? 'error' : ''}
-              defaultValue=""
-            >
-              {!!expeditionOrg &&
-                expeditionOrg.map((org) => (
-                  <option key={org.value} value={org.value}>
-                    {org.label}
-                  </option>
-                ))}
-            </InputBase>
-            {errors.expedition && (
-              <ErrorMessage>{errors.expedition.message}</ErrorMessage>
-            )}
-          </FormController>
-        </InputContainer>
-        <InputContainer centered>
-          <FormController isRow>
-            <span>Sexo</span>
-            <RadioController>
-              <input
-                type="radio"
-                id="male"
-                value="male"
-                {...register('gender')}
+      {selectedStep === 1 && (
+        <FormContainer>
+          <InputContainer>
+            <FormController flex={1}>
+              <label className={errors.amount ? 'error' : ''} htmlFor="amount">
+                Valor
+              </label>
+              <InputBase
+                type="number"
+                {...register('amount')}
+                className={errors.amount ? 'error' : ''}
+                placeholder="Digite um valor"
               />
-              <label htmlFor="male">Masculino</label>
-            </RadioController>
-            <RadioController>
-              <input
-                type="radio"
-                id="female"
-                value="female"
-                {...register('gender')}
+              {errors.amount && (
+                <ErrorMessage>{errors.amount.message}</ErrorMessage>
+              )}
+            </FormController>
+          </InputContainer>
+          <InputContainer>
+            <FormController flex={1}>
+              <label
+                className={errors.installments ? 'error' : ''}
+                htmlFor="installments"
+              >
+                Parcelas
+              </label>
+              <InputBase
+                type="number"
+                {...register('installments')}
+                className={errors.installments ? 'error' : ''}
+                placeholder="Digite a quantidade de parcelas"
               />
-              <label htmlFor="female">Feminino</label>
-            </RadioController>
-            {errors.gender && (
-              <ErrorMessage>{errors.gender.message}</ErrorMessage>
-            )}
-          </FormController>
-        </InputContainer>
-        <InputContainer centered>
-          <SubmitButton type="submit" disabled={!isValid || loading}>
-            Continuar
-            {loading ? (
-              <CircleNotch className="animate" size={24} weight="duotone" />
-            ) : (
+              {errors.installments && (
+                <ErrorMessage>{errors.installments.message}</ErrorMessage>
+              )}
+            </FormController>
+          </InputContainer>
+          <InputContainer centered>
+            <SubmitButton
+              type="button"
+              onClick={() => goToNextStep()}
+              disabled={
+                handleDisabled('amount') || handleDisabled('installments')
+              }
+            >
+              Continuar
               <CaretRight size={24} weight="duotone" />
-            )}
-          </SubmitButton>
-        </InputContainer>
-      </FormContainer>
+            </SubmitButton>
+          </InputContainer>
+        </FormContainer>
+      )}
+      {selectedStep === 2 && (
+        <FormContainer>
+          <InputContainer>
+            <FormController flex={1}>
+              <label className={errors.name ? 'error' : ''} htmlFor="name">
+                Nome
+              </label>
+              <InputBase
+                type="text"
+                {...register('name')}
+                className={errors.name ? 'error' : ''}
+                placeholder="Digite seu Nome"
+              />
+              {errors.name && (
+                <ErrorMessage>{errors.name.message}</ErrorMessage>
+              )}
+            </FormController>
+            <FormController>
+              <label className={errors.cpf ? 'error' : ''} htmlFor="cpf">
+                Cpf
+              </label>
+              <InputBase
+                type="text"
+                {...register('cpf')}
+                className={errors.cpf ? 'error' : ''}
+                placeholder="Digite seu cpf"
+                onChange={handleApplyMask}
+              />
+              {errors.cpf && <ErrorMessage>{errors.cpf.message}</ErrorMessage>}
+            </FormController>
+          </InputContainer>
+          <InputContainer>
+            <FormController flex={1}>
+              <label
+                className={errors.description ? 'error' : ''}
+                htmlFor="description"
+              >
+                Motivo do empréstimo
+              </label>
+              <InputBase
+                type="text"
+                {...register('description')}
+                className={errors.description ? 'error' : ''}
+                placeholder="Digite seu Nome"
+              />
+              {errors.description && (
+                <ErrorMessage>{errors.description.message}</ErrorMessage>
+              )}
+            </FormController>
+          </InputContainer>
+          <InputContainer>
+            <FormController flex={1}>
+              <label className={errors.rg ? 'error' : ''} htmlFor="rg">
+                Número do RG
+              </label>
+              <InputBase
+                type="text"
+                {...register('rg')}
+                className={errors.rg ? 'error' : ''}
+                placeholder="Digite seu RG"
+              />
+              {errors.rg && <ErrorMessage>{errors.rg.message}</ErrorMessage>}
+            </FormController>
+            <FormController>
+              <label
+                className={errors.emissionDate ? 'error' : ''}
+                htmlFor="emissionDate"
+              >
+                Data de emissão
+              </label>
+              <InputBase
+                type="date"
+                {...register('emissionDate')}
+                className={errors.emissionDate ? 'error' : ''}
+                placeholder="Data de emissão do documento"
+              />
+              {errors.emissionDate && (
+                <ErrorMessage>{errors.emissionDate.message}</ErrorMessage>
+              )}
+            </FormController>
+            <FormController>
+              <label
+                className={errors.expedition ? 'error' : ''}
+                htmlFor="expedition"
+              >
+                Orgão expedidor
+              </label>
+              <InputBase
+                as="select"
+                {...register('expedition')}
+                className={errors.expedition ? 'error' : ''}
+                defaultValue=""
+              >
+                {!!expeditionOrg &&
+                  expeditionOrg.map((org) => (
+                    <option key={org.value} value={org.value}>
+                      {org.label}
+                    </option>
+                  ))}
+              </InputBase>
+              {errors.expedition && (
+                <ErrorMessage>{errors.expedition.message}</ErrorMessage>
+              )}
+            </FormController>
+          </InputContainer>
+          <InputContainer centered>
+            <FormController isRow>
+              <span>Sexo</span>
+              <RadioController>
+                <input
+                  type="radio"
+                  id="male"
+                  value="male"
+                  {...register('gender')}
+                />
+                <label htmlFor="male">Masculino</label>
+              </RadioController>
+              <RadioController>
+                <input
+                  type="radio"
+                  id="female"
+                  value="female"
+                  {...register('gender')}
+                />
+                <label htmlFor="female">Feminino</label>
+              </RadioController>
+              {errors.gender && (
+                <ErrorMessage>{errors.gender.message}</ErrorMessage>
+              )}
+            </FormController>
+          </InputContainer>
+          <InputContainer centered>
+            <SubmitButton
+              type="button"
+              disabled={!isValid || !isDirty}
+              onClick={() => goToNextStep()}
+            >
+              Continuar
+              <CaretRight size={24} weight="duotone" />
+            </SubmitButton>
+          </InputContainer>
+        </FormContainer>
+      )}
+      {selectedStep === 3 && (
+        <FormContainer>
+          <InputContainer centered>
+            <SubmitButton
+              type="button"
+              disabled={!isValid || !isDirty}
+              onClick={() => goToNextStep()}
+            >
+              Continuar
+              <CaretRight size={24} weight="duotone" />
+            </SubmitButton>
+          </InputContainer>
+        </FormContainer>
+      )}
+      {selectedStep === 4 && (
+        <FormContainer>
+          <InputContainer centered>
+            <SubmitButton
+              type="submit"
+              disabled={!isValid || !isDirty || loading}
+            >
+              Continuar
+              {loading ? (
+                <CircleNotch className="animate" size={24} weight="duotone" />
+              ) : (
+                <CaretRight size={24} weight="duotone" />
+              )}
+            </SubmitButton>
+          </InputContainer>
+        </FormContainer>
+      )}
     </form>
   )
 }

@@ -7,14 +7,9 @@ interface Step {
   completed: boolean
   numberOfStep: number
 }
-
-type FromTo = {
-  from: number
-  to: number
-}
-
 interface StepContextProps {
-  moveStep: ({ from, to }: FromTo) => void
+  goToNextStep: () => void
+  selectedStep: number
 }
 
 const StepContext = createContext({} as StepContextProps)
@@ -52,10 +47,12 @@ const STEPS: Step[] = [
 
 export function StepContextProvider({ children }: StepContextProviderProps) {
   const [steps, setSteps] = useState<Step[]>(STEPS)
+  const [selectedStep, setSelectedStep] = useState<number>(1)
 
-  function goToNextStep({ from, to }: FromTo) {
-    const indexStepFrom = steps.findIndex((step) => step.numberOfStep === from)
-    const indexStepTo = steps.findIndex((step) => step.numberOfStep === from)
+  function goToNextStep() {
+    const indexOfStep = steps.findIndex(
+      (step) => step.numberOfStep === selectedStep,
+    )
 
     const stepsMutated = steps.map((step, index) => {
       if (index === indexOfStep) {
@@ -66,14 +63,22 @@ export function StepContextProvider({ children }: StepContextProviderProps) {
         }
       }
 
+      if (indexOfStep + 1 === index) {
+        return {
+          ...step,
+          selected: true,
+        }
+      }
+
       return step
     })
 
     setSteps(stepsMutated)
+    setSelectedStep(selectedStep + 1)
   }
 
   return (
-    <StepContext.Provider value={{ goToNextStep }}>
+    <StepContext.Provider value={{ goToNextStep, selectedStep }}>
       <Steps steps={steps} />
       {children}
     </StepContext.Provider>
