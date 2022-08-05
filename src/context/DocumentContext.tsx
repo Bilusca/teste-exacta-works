@@ -1,4 +1,3 @@
-import axios from 'axios'
 import format from 'date-fns/format'
 import {
   createContext,
@@ -12,6 +11,8 @@ import {
 import { api } from '@/lib/api'
 import { selectGender } from '@/lib/selectGender'
 import toast from 'react-hot-toast'
+
+import DATA from '../../data.json'
 
 interface Document {
   name: string
@@ -29,10 +30,6 @@ interface Document {
 type ExpeditionOrg = {
   label: string
   value: string
-}
-
-type ReponseProps = {
-  orgao_emissor: ExpeditionOrg[]
 }
 
 interface DocumentContextProps {
@@ -118,9 +115,7 @@ export function DocumentContextProvider({
   useEffect(() => {
     if (shouldFetch.current) {
       shouldFetch.current = false
-      axios.get<ReponseProps>('data.json').then((response) => {
-        setExpeditionOrg(response.data.orgao_emissor)
-      })
+      setExpeditionOrg(DATA.orgao_emissor)
     }
   }, [])
 

@@ -22,6 +22,7 @@ import { CaretRight, Check, CircleNotch } from 'phosphor-react'
 import toast from 'react-hot-toast'
 import { format } from 'date-fns'
 import { selectGender } from '@/lib/selectGender'
+import { parseCurrencyBrl } from '@/lib/parseCurrencyBrl'
 
 type Inputs = {
   name: string
@@ -95,7 +96,7 @@ export function Form({ loading, onSubmitForm, document }: FormProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isDirty },
+    formState: { errors, isValid },
     reset,
     getFieldState,
     watch,
@@ -353,7 +354,7 @@ export function Form({ loading, onSubmitForm, document }: FormProps) {
             </div>
             <div>
               <span>
-                <b>Valor:</b> {getValues().amount}
+                <b>Valor:</b> {parseCurrencyBrl(getValues().amount)}
               </span>
               <span>
                 <b>Parcelas:</b> {getValues().installments}
@@ -366,7 +367,7 @@ export function Form({ loading, onSubmitForm, document }: FormProps) {
           <InputContainer centered>
             <SubmitButton
               type="button"
-              disabled={!isValid || !isDirty}
+              disabled={!isValid}
               onClick={() => goToNextStep()}
             >
               Continuar
@@ -384,10 +385,7 @@ export function Form({ loading, onSubmitForm, document }: FormProps) {
             </p>
           </InfoContainer>
           <InputContainer centered>
-            <SubmitButton
-              type="submit"
-              disabled={!isValid || !isDirty || loading}
-            >
+            <SubmitButton type="submit" disabled={!isValid || loading}>
               Concluir pedido
               {loading ? (
                 <CircleNotch className="animate" size={24} weight="duotone" />

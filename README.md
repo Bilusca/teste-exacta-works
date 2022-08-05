@@ -2,6 +2,8 @@
 
 Teste de front da Exacta Works, consiste em um sistema de cadastros de documentos para cotação de emprestimos.
 
+![Primeiro passo](/project-images/exactapay.gif)
+
 ## URL da aplicação
 
 [Da uma checada 😉](https://exactapay.netlify.app/)

@@ -1,4 +1,5 @@
 import { useDeleteModalContext } from '@/context/DeleteModalContext'
+import { parseCurrencyBrl } from '@/lib/parseCurrencyBrl'
 import { Pen, Trash } from 'phosphor-react'
 import { NavLink } from 'react-router-dom'
 import { ActionsCell, DocumentsContainer } from './styles'
@@ -51,7 +52,7 @@ export function Documents({ documents }: DocumentsProps) {
               <td>{document.expedition}</td>
               <td>{document.emissionDate}</td>
               <td>{document.gender}</td>
-              <td>{document.amount}</td>
+              <td>{parseCurrencyBrl(document.amount)}</td>
               <td>{document.installments}x</td>
               <td>{document.description}</td>
               <ActionsCell>
