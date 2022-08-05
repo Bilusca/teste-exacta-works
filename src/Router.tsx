@@ -9,6 +9,7 @@ export function Router() {
       <Route path="/" element={<DefaultLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="cadastro" element={<Registration />} />
+        <Route path="cadastro/:id" element={<Registration />} />
       </Route>
     </Routes>
   )

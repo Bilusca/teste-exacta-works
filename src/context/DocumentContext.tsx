@@ -14,6 +14,11 @@ import { selectGender } from '@/lib/selectGender'
 import toast from 'react-hot-toast'
 
 interface Document {
+  name: string
+  cpf: string
+  amount: number
+  installments: number
+  description: string
   emissionDate: string
   expedition: string
   id: string

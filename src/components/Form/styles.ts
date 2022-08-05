@@ -1,22 +1,5 @@
 import styled, { css, keyframes } from 'styled-components'
 
-export const RegistrationContainer = styled.main`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin-bottom: 3rem;
-
-  h1 {
-    margin: 5rem 0;
-    text-transform: uppercase;
-  }
-
-  form {
-    width: 100%;
-  }
-`
-
 export const FormContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -182,13 +165,13 @@ export const RadioController = styled.div`
 `
 
 const rotate = keyframes`
-  0% {
-    transform: rotate(0deg);
-  }
+0% {
+  transform: rotate(0deg);
+}
 
-  100% {
-    transform: rotate(360deg);
-  }
+100% {
+  transform: rotate(360deg);
+}
 `
 
 export const SubmitButton = styled.button`
@@ -201,6 +184,10 @@ export const SubmitButton = styled.button`
   padding: 0 3rem;
   cursor: pointer;
   text-transform: uppercase;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 
   svg {
     margin-left: 1rem;
