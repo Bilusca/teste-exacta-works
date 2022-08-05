@@ -1,14 +1,14 @@
 import { useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+
 import toast from 'react-hot-toast'
 import { format } from 'date-fns'
-import { useNavigate } from 'react-router-dom'
 
+import { StepContextProvider } from '@/context/StepContex'
 import { useDocumentContext } from '@/context/DocumentContext'
 import { api } from '@/lib/api'
 import { Form } from '@/components/Form'
-import { StepContextProvider } from '@/context/StepContex'
-
-import { RegistrationContainer } from './styles'
+import { EditRegistrationContainer } from './styles'
 
 type Inputs = {
   name: string
@@ -38,17 +38,23 @@ interface DocumentsApiResponse {
   }
 }
 
-export function Registration() {
+export function EditRegistration() {
+  const { id } = useParams()
   const navigate = useNavigate()
-  const { handleSetDocuments } = useDocumentContext()
+  const { selectDocument, handleUpdateDocuments } = useDocumentContext()
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const document = selectDocument(String(id))
+
+  const [loading, setLoading] = useState(false)
 
   const onSubmit = async (data: Inputs) => {
     setLoading(true)
 
     try {
-      const response = await api.post<DocumentsApiResponse>('documents', data)
+      const response = await api.put<DocumentsApiResponse>(
+        `documents/${id}`,
+        data,
+      )
       const document = {
         ...response.data.document,
         emissionDate: format(
@@ -56,25 +62,25 @@ export function Registration() {
           'dd/MM/yyy',
         ),
       }
-      handleSetDocuments(document)
+      handleUpdateDocuments(String(id), document)
 
       toast.success(response.data.message)
       navigate('/')
     } catch {
-      toast.error('Não foi possível cadastrar o documento')
+      toast.error('Não foi possível atulizar o documento')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <RegistrationContainer>
+    <EditRegistrationContainer>
       <StepContextProvider>
         <>
-          <h1>Dados pessoais</h1>
-          <Form loading={loading} onSubmitForm={onSubmit} />
+          <h1>Editar dados pessoais</h1>
+          <Form loading={loading} onSubmitForm={onSubmit} document={document} />
         </>
       </StepContextProvider>
-    </RegistrationContainer>
+    </EditRegistrationContainer>
   )
 }

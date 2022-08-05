@@ -16,6 +16,32 @@ export const FormContainer = styled.div`
     align-items: flex-start;
   }
 `
+
+export const InfoContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto 2rem auto;
+  gap: 3rem;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  p {
+    font-size: 1.785rem;
+    text-align: center;
+  }
+
+  @media (max-width: ${(props) => props.theme.tabletBreakpoint}) {
+    width: 80%;
+    flex-direction: column;
+    gap: 3rem;
+    align-items: flex-start;
+  }
+`
+
 interface FormControllerProps {
   isRow?: boolean
   flex?: number

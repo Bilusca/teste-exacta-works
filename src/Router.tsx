@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import { DefaultLayout } from '@/layouts/DefaultLayout'
 import { Home } from '@/pages/Home'
 import { Registration } from '@/pages/Registration'
+import { EditRegistration } from '@/pages/EditRegistration'
 
 export function Router() {
   return (
@@ -9,7 +10,7 @@ export function Router() {
       <Route path="/" element={<DefaultLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="cadastro" element={<Registration />} />
-        <Route path="cadastro/:id" element={<Registration />} />
+        <Route path="cadastro/:id" element={<EditRegistration />} />
       </Route>
     </Routes>
   )

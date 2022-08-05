@@ -12,13 +12,16 @@ import {
   ErrorMessage,
   FormContainer,
   FormController,
+  InfoContainer,
   InputBase,
   InputContainer,
   RadioController,
   SubmitButton,
 } from './styles'
-import { CaretRight, CircleNotch } from 'phosphor-react'
+import { CaretRight, Check, CircleNotch } from 'phosphor-react'
 import toast from 'react-hot-toast'
+import { format } from 'date-fns'
+import { selectGender } from '@/lib/selectGender'
 
 type Inputs = {
   name: string
@@ -30,6 +33,18 @@ type Inputs = {
   expedition: string
   gender: 'male' | 'female'
   description: string
+}
+
+interface Document {
+  name: string
+  emissionDate: string | Date
+  expedition: string
+  rg: string
+  gender: string
+  description: string
+  amount: number
+  installments: number
+  cpf: string
 }
 
 const schema = yup.object({
@@ -70,9 +85,10 @@ const schema = yup.object({
 interface FormProps {
   loading: boolean
   onSubmitForm: (data: Inputs) => void
+  document?: Document
 }
 
-export function Form({ loading, onSubmitForm }: FormProps) {
+export function Form({ loading, onSubmitForm, document }: FormProps) {
   const { expeditionOrg } = useDocumentContext()
   const { goToNextStep, selectedStep } = useStepContext()
 
@@ -83,7 +99,13 @@ export function Form({ loading, onSubmitForm }: FormProps) {
     reset,
     getFieldState,
     watch,
-  } = useForm<Inputs>({ resolver: yupResolver(schema), mode: 'all' })
+    getValues,
+  } = useForm<Inputs>({
+    resolver: yupResolver(schema),
+    mode: 'all',
+    // @ts-ignore: Unreachable code error
+    defaultValues: document ?? {},
+  })
 
   function handleApplyMask(e: ChangeEvent<HTMLInputElement>) {
     const parsedValue = parseCpf(e.target.value, e.target.value)
@@ -208,7 +230,7 @@ export function Form({ loading, onSubmitForm }: FormProps) {
                 type="text"
                 {...register('description')}
                 className={errors.description ? 'error' : ''}
-                placeholder="Digite seu Nome"
+                placeholder="Motivo do emprestimo"
               />
               {errors.description && (
                 <ErrorMessage>{errors.description.message}</ErrorMessage>
@@ -272,7 +294,7 @@ export function Form({ loading, onSubmitForm }: FormProps) {
           </InputContainer>
           <InputContainer centered>
             <FormController isRow>
-              <span>Sexo</span>
+              <span>Sexo </span>
               <RadioController>
                 <input
                   type="radio"
@@ -299,7 +321,7 @@ export function Form({ loading, onSubmitForm }: FormProps) {
           <InputContainer centered>
             <SubmitButton
               type="button"
-              disabled={!isValid || !isDirty}
+              disabled={!isValid}
               onClick={() => goToNextStep()}
             >
               Continuar
@@ -310,6 +332,37 @@ export function Form({ loading, onSubmitForm }: FormProps) {
       )}
       {selectedStep === 3 && (
         <FormContainer>
+          <InfoContainer>
+            <div>
+              <span>
+                <b>Nome:</b> {getValues().name}
+              </span>
+              <span>
+                <b>Cpf:</b> {getValues().cpf}
+              </span>
+              <span>
+                <b>Rg:</b> {getValues().rg}
+              </span>
+              <span>
+                <b>Data de emissão:</b>{' '}
+                {format(new Date(getValues().emissionDate), 'dd/MM/yyyy')}
+              </span>
+              <span>
+                <b>Sexo:</b> {selectGender(getValues().gender)}
+              </span>
+            </div>
+            <div>
+              <span>
+                <b>Valor:</b> {getValues().amount}
+              </span>
+              <span>
+                <b>Parcelas:</b> {getValues().installments}
+              </span>
+              <span>
+                <b>Descrição:</b> {getValues().description}
+              </span>
+            </div>
+          </InfoContainer>
           <InputContainer centered>
             <SubmitButton
               type="button"
@@ -324,16 +377,22 @@ export function Form({ loading, onSubmitForm }: FormProps) {
       )}
       {selectedStep === 4 && (
         <FormContainer>
+          <InfoContainer>
+            <p>
+              Pronto, agora analisaremos seu pedido, retornaremos o mais rápido
+              possível 🤑
+            </p>
+          </InfoContainer>
           <InputContainer centered>
             <SubmitButton
               type="submit"
               disabled={!isValid || !isDirty || loading}
             >
-              Continuar
+              Concluir pedido
               {loading ? (
                 <CircleNotch className="animate" size={24} weight="duotone" />
               ) : (
-                <CaretRight size={24} weight="duotone" />
+                <Check size={24} weight="duotone" />
               )}
             </SubmitButton>
           </InputContainer>

@@ -40,6 +40,8 @@ interface DocumentContextProps {
   loading: boolean
   documents: Document[]
   handleSetDocuments: (document: Document) => void
+  handleUpdateDocuments: (id: string, document: Document) => void
+  selectDocument: (id: string) => Document
 }
 
 const DocumentContext = createContext({} as DocumentContextProps)
@@ -69,6 +71,43 @@ export function DocumentContextProvider({
     }
 
     setDocuments([...documents, documentToSave])
+  }
+
+  function handleUpdateDocuments(id: string, document: Document) {
+    const filteredDocs = documents.filter((doc) => doc.id !== id)
+
+    const documentToSave = {
+      ...document,
+      id,
+      emissionDate: format(new Date(document.emissionDate), 'dd/MM/yyy'),
+      gender: selectGender(document.gender),
+      expedition: expeditionOrg.filter(
+        (org) => document.expedition === org.value,
+      )[0].label,
+    }
+
+    setDocuments([...filteredDocs, documentToSave])
+  }
+
+  function selectDocument(id: string) {
+    const indexOfDoc = documents.findIndex((doc) => doc.id === id)
+    const selectedDocument = documents[indexOfDoc]
+
+    const docToEdit = {
+      ...selectedDocument,
+      expedition: expeditionOrg.filter(
+        (org) => selectedDocument.expedition === org.label,
+      )[0].value,
+      emissionDate: format(
+        new Date(selectedDocument.emissionDate),
+        'yyyy-MM-dd',
+      ),
+      gender: selectedDocument.gender === 'Masculino' ? 'male' : 'female',
+    }
+
+    console.log(docToEdit)
+
+    return docToEdit
   }
 
   useEffect(() => {
@@ -111,7 +150,14 @@ export function DocumentContextProvider({
 
   return (
     <DocumentContext.Provider
-      value={{ expeditionOrg, loading, documents, handleSetDocuments }}
+      value={{
+        expeditionOrg,
+        loading,
+        documents,
+        handleSetDocuments,
+        selectDocument,
+        handleUpdateDocuments,
+      }}
     >
       {children}
     </DocumentContext.Provider>

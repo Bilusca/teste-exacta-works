@@ -42,3 +42,37 @@ export const DocumentsContainer = styled.div`
     }
   }
 `
+
+export const ActionsCell = styled.td`
+  a,
+  button {
+    width: 1.85rem;
+    height: 1.85rem;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+  }
+
+  a {
+    margin-right: 0.5rem;
+    svg {
+      color: ${(props) => props.theme['blue-500']};
+      transition: filter 0.3s ease-in-out;
+      &:hover {
+        filter: brightness(0.8);
+      }
+    }
+  }
+
+  button {
+    border: none;
+    background: none;
+    svg {
+      color: ${(props) => props.theme['red-500']};
+      transition: filter 0.3s ease-in-out;
+      &:hover {
+        filter: brightness(0.8);
+      }
+    }
+  }
+`
