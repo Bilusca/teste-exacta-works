@@ -56,6 +56,8 @@ export function EditRegistration() {
         `documents/${id}`,
         data,
       )
+      console.log(new Date(response.data.document.emissionDate))
+
       const document = {
         ...response.data.document,
         emissionDate: format(
@@ -67,7 +69,8 @@ export function EditRegistration() {
 
       toast.success(response.data.message)
       navigate('/')
-    } catch {
+    } catch (e) {
+      console.log(e)
       toast.error('Não foi possível atulizar o documento')
     } finally {
       setLoading(false)

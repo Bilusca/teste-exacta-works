@@ -1,4 +1,5 @@
 import format from 'date-fns/format'
+import { DateTime } from 'luxon'
 import {
   createContext,
   ReactNode,
@@ -77,7 +78,10 @@ export function DocumentContextProvider({
     const documentToSave = {
       ...document,
       id,
-      emissionDate: format(new Date(document.emissionDate), 'dd/MM/yyy'),
+      emissionDate: format(
+        DateTime.fromFormat(document.emissionDate, 'dd/MM/yyyy').toJSDate(),
+        'dd/MM/yyyy',
+      ),
       gender: selectGender(document.gender),
       expedition: expeditionOrg.filter(
         (org) => document.expedition === org.value,
@@ -97,7 +101,10 @@ export function DocumentContextProvider({
         (org) => selectedDocument.expedition === org.label,
       )[0].value,
       emissionDate: format(
-        new Date(selectedDocument.emissionDate),
+        DateTime.fromFormat(
+          selectedDocument.emissionDate,
+          'dd/MM/yyyy',
+        ).toJSDate(),
         'yyyy-MM-dd',
       ),
       gender: selectedDocument.gender === 'Masculino' ? 'male' : 'female',
@@ -129,7 +136,7 @@ export function DocumentContextProvider({
         const response = resp.data.map((document) => {
           return {
             ...document,
-            emissionDate: format(new Date(document.emissionDate), 'dd/MM/yyy'),
+            emissionDate: format(new Date(document.emissionDate), 'dd/MM/yyyy'),
             gender: selectGender(document.gender),
             expedition: expeditionOrg.filter(
               (org) => document.expedition === org.value,
